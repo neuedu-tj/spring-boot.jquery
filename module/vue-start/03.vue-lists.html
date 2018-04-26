@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        .photo {
+            height: 60px; width: 60px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+
+<br><br>
+
+    <div id="app" class="container-fluid">
+
+
+
+        I  D : <input type="text" v-model="emp.id"><br>
+        NAME : <input type="text"  v-model="emp.name"><br>
+        DESC : <input type="text"  v-model="emp.desc"><br>
+        IMGS : <input type="text"  v-model="emp.img"><br><br>
+
+        <input class="btn btn-primary" value="add" @click="addEmp">
+
+        <hr>
+
+        <table class="table table-bordered table-hover">
+
+            <tr>
+                <td>ID</td>
+                <td>NAME</td>
+                <td>DESC</td>
+                <td>IMG</td>
+                <td>Control</td>
+            </tr>
+
+            <tr v-for="data in emps">
+                <td>{{data.id}}</td>
+                <td>{{data.name}}</td>
+                <td>{{data.desc}}</td>
+                <td><img class="photo" :src="data.img"></td>
+                <td><input @click="removeEmp(data)" type="button" value="remove" class="btn btn-danger"></td>
+            </tr>
+
+
+
+        </table>
+
+
+    </div>
+
+</body>
+</html>
+
+<script src="../../node_modules/vue/dist/vue.js"></script>
+
+<script>
+
+    var vm = new Vue({
+
+        el : "#app" ,
+        data : {
+           emps : [
+               {"id" : 1 , "name" : "tom" , "desc" : "VUE 全栈工程师" , "img" : "../../img/vue.jpg"},
+               {"id" : 2 , "name" : "jack" , "desc" : "spring 全栈工程师" , "img" : "../../img/spring-boot.png"},
+               {"id" : 3 , "name" : "郭德纲" , "desc" : "相声大师" , "img" : "../../img/boot-logo.jpg"},
+               {"id" : 4 , "name" : "于谦" , "desc" : "抽烟 喝酒 烫头" , "img" : "../../img/mysql.jpg"}
+           ] ,
+
+           emp : {"id" : 0 , "name" : "" , "desc" : " " , "img" : ""}
+        } ,
+        methods : {
+
+            addEmp : function() {
+                this.emps.push(this.emp);
+                this.emp = {"id" : 0 , "name" : "" , "desc" : " " , "img" : ""}
+            },
+            removeEmp : function(data){
+
+                var index = this.emps.indexOf(data);
+                this.emps.splice(index , 1);
+            }
+
+
+        }
+
+
+    })
+
+</script>
+
