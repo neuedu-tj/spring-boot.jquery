@@ -24,12 +24,13 @@
 
 
 
-        I  D : <input type="text" v-model="emp.id"><br>
-        NAME : <input type="text"  v-model="emp.name"><br>
-        DESC : <input type="text"  v-model="emp.desc"><br>
-        IMGS : <input type="text"  v-model="emp.img"><br><br>
+        <!--I&nbsp;D :<input type="text" v-model="emp.pid"><br>-->
+        NAME : <input type="text"  v-model="product.pname"><br>
+        Price : <input type="text"  v-model="product.price"><br>
+        DESC : <input type="text"  v-model="product.description"><br>
+        <!--IMGS : <input type="text"  v-model="product.imgs"><br><br>-->
 
-        <input class="btn btn-primary" value="add" @click="addEmp">
+        <input class="btn btn-primary" value="add" @click="addProduct">
 
         <hr>
 
@@ -43,12 +44,12 @@
                 <td>Control</td>
             </tr>
 
-            <tr v-for="data in emps">
-                <td>{{data.id}}</td>
-                <td>{{data.name}}</td>
-                <td>{{data.desc}}</td>
-                <td><img class="photo" :src="data.img"></td>
-                <td><input @click="removeEmp(data)" type="button" value="remove" class="btn btn-danger"></td>
+            <tr v-for="data in products">
+                <td>{{data.pid}}</td>
+                <td>{{data.pname}}</td>
+                <td>{{data.description}}</td>
+                <td><img class="photo" :src="data.imgs"></td>
+                <td><input @click="removeProduct(data)" type="button" value="remove" class="btn btn-danger"></td>
             </tr>
 
 
@@ -62,6 +63,7 @@
 </html>
 
 <script src="../../node_modules/vue/dist/vue.js"></script>
+<script src="../../node_modules/vue-resource/dist/vue-resource.js"></script>
 
 <script>
 
@@ -69,25 +71,53 @@
 
         el : "#app" ,
         data : {
-           emps : [
-               {"id" : 1 , "name" : "tom" , "desc" : "VUE 全栈工程师" , "img" : "../../img/vue.jpg"},
-               {"id" : 2 , "name" : "jack" , "desc" : "spring 全栈工程师" , "img" : "../../img/spring-boot.png"},
-               {"id" : 3 , "name" : "郭德纲" , "desc" : "相声大师" , "img" : "../../img/boot-logo.jpg"},
-               {"id" : 4 , "name" : "于谦" , "desc" : "抽烟 喝酒 烫头" , "img" : "../../img/mysql.jpg"}
-           ] ,
+           products : [] ,
 
-           emp : {"id" : 0 , "name" : "" , "desc" : " " , "img" : ""}
+           product : {"pid" : 0 , "pname" : "" , "price" : 0 ,  "description" : " " , "imgs" : ""}
         } ,
+        mounted : function() {   //onload
+            this.$nextTick(function () {    //vue-2.x
+                this.init();
+            })
+        },
+
         methods : {
 
-            addEmp : function() {
-                this.emps.push(this.emp);
-                this.emp = {"id" : 0 , "name" : "" , "desc" : " " , "img" : ""}
-            },
-            removeEmp : function(data){
+            init : function() {
 
-                var index = this.emps.indexOf(data);
-                this.emps.splice(index , 1);
+                var _this = this;
+
+                this.$http.get("http://localhost:8088/mvc01/product").then(function(res){
+                    _this.products = res.data;
+                })
+            },
+
+            addProduct : function() {
+                var _this = this;
+
+                this.$http.post("http://localhost:8088/mvc01/product" , this.product , {emulateJSON : true} ).then(function(res){
+
+                   _this.products.push(res.data);
+                   _this.product = {"pid" : 0 , "pname" : "" , "price" : 0 ,  "description" : " " , "imgs" : ""};
+                })
+            },
+            removeProduct : function(data){
+
+                if(confirm("确定要删除 ? ")) {
+                    var _this = this;
+                    this.$http.delete("http://localhost:8088/mvc01/product/"+data.pid).then(function(res) {
+                        if(res.data>0) {
+                            var index = _this.products.indexOf(data);
+                            _this.products.splice(index , 1);
+                        }
+                    })
+                } else {
+                    return;
+                }
+
+
+
+
             }
 
 
